@@ -4,11 +4,12 @@ require 'rbconfig'
 module FSSM::Backend
   class Registry
     include Singleton
-    
+
     attr_reader :env
-    
+
     def initialize
       @backends = {}
+      @attempt_order = []
       @env = {
         :jruby => defined?(JRUBY_VERSION),
         :os => Config::CONFIG['target_os'],
@@ -16,25 +17,38 @@ module FSSM::Backend
         :linux => Config::CONFIG['target_os'] =~ /linux/i
       }
     end
-    
+
     def create(backend)
       raise ArgumentError, "unimplemented: #{backend}.key" unless
         backend.respond_to?(:key) && !backend.key.nil?
-      @backends["#{backend.key}".to_sym] = backend
+      key = "#{backend.key}"
+      @backends[key.to_sym] = backend
+      @attempt_order.unshift(key.to_sym)
+
+      if @attempt_order.include?(:poll) && @attempt_order[-1] != :poll
+        @attempt_order.delete!(:poll)
+        @attempt_order.push(:poll)
+      end
     end
-    
+
     def delete(backend_or_key)
-      key = backend_or_key.respond_to?(:key) ? backend_or_key.key : backend_or_key
-      @backends.delete("#{key}".to_sym)
+      key = backend_or_key.respond_to?(:key) ? "#{backend_or_key.key}" : "#{backend_or_key}"
+      @backends.delete(key.to_sym)
+      @attempt_order.delete(key.to_sym)
     end
-    
+
     def backends
-      @backends.keys.map(&:to_s).sort
+      @attempt_order.map {|k| "#{k}"}
     end
-    
+
     def choose(key=:auto)
-      return @backends[key] if @backends.has_key?(key) and @backends[key].usable?
+      if key == :auto
+        chosen = @attempt_order.find {|key| @backends[key].usable?}
+        @backends[chosen]
+      elsif @backends.has_key?(key) and @backends[key].usable?
+        @backends[key]
+      end
     end
-    
+
   end
 end
