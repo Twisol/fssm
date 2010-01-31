@@ -10,8 +10,7 @@ begin
     gem.email = "ttilley@gmail.com"
     gem.homepage = "http://github.com/ttilley/fssm"
     gem.authors = ["Travis Tilley"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_development_dependency "shoulda", ">= 0"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
