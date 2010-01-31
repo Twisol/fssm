@@ -7,4 +7,4 @@ module FSSM
 end
 
 require 'fssm/support'
-require 'fssm/dsl'
+#require 'fssm/dsl'
