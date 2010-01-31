@@ -23,7 +23,7 @@ module FSSM::Backend
         backend.respond_to?(:key) && !backend.key.nil?
       key = "#{backend.key}"
       @backends[key.to_sym] = backend
-      @attempt_order.unshift(key.to_sym)
+      @attempt_order.unshift(key.to_sym).uniq!
 
       if @attempt_order.include?(:poll) && @attempt_order[-1] != :poll
         @attempt_order.delete!(:poll)
