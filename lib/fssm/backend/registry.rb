@@ -11,10 +11,10 @@ module FSSM::Backend
       @backends = {}
       @attempt_order = []
       @env = {
-        :jruby => defined?(JRUBY_VERSION),
+        :jruby => !!(defined?(JRUBY_VERSION)),
         :os => Config::CONFIG['target_os'],
-        :mac => Config::CONFIG['target_os'] =~ /darwin/i,
-        :linux => Config::CONFIG['target_os'] =~ /linux/i
+        :mac => !!(Config::CONFIG['target_os'] =~ /darwin/i),
+        :linux => !!(Config::CONFIG['target_os'] =~ /linux/i)
       }
     end
 
