@@ -148,6 +148,10 @@ module FSSM::Support::Tree
       path = FSSM::Support::Pathname.for(path).expand_path
       super(path)
     end
+    
+    def all
+      ftype(nil)
+    end
 
     def files
       ftype('file')
@@ -165,9 +169,9 @@ module FSSM::Support::Tree
 
     private
 
-    def ftype(ft)
+    def ftype(ft=nil)
       inject({}) do |hash, (path, node)|
-        hash["#{path}"] = node.mtime if node.ftype == ft
+        hash["#{path}"] = node.mtime if ft && node.ftype == ft && node.mtime
         hash
       end
     end
