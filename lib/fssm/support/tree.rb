@@ -171,7 +171,8 @@ module FSSM::Support::Tree
 
     def ftype(ft=nil)
       inject({}) do |hash, (path, node)|
-        hash["#{path}"] = node.mtime if ft && node.ftype == ft && node.mtime
+        next unless node.mtime
+        hash["#{path}"] = node.mtime if ft.nil? || node.ftype == ft
         hash
       end
     end
