@@ -1,13 +1,14 @@
 module FSSM::Abstractions
   InvalidAbstraction = Class.new(StandardError)
   
-  class Path    
-    def initialize(path)
-      @path = FSSM::Support::Pathname.for(path).expand_path
+  class File    
+    def initialize(file)
+      @file = FSSM::Support::Pathname.for(file).expand_path
+      raise InvalidAbstraction unless @file.file?
     end
     
     def to_s
-      "#{@path}"
+      "#{@file}"
     end
   end
   
@@ -31,16 +32,16 @@ module FSSM::Abstractions
   end
   
   class Group
-    attr_reader :paths
+    attr_reader :files
     attr_reader :patterns
     
     def initialize(args={})
-      @paths = args[:paths] || []
+      @files = args[:files] || []
       @patterns = args[:patterns] || []
     end
     
-    def path(path)
-      @paths.push(Path.new(path))
+    def file(file)
+      @files.push(File.new(file))
     end
     
     def pattern(path, glob=nil)
