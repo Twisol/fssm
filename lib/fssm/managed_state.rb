@@ -4,7 +4,7 @@ module FSSM
       @cache = FSSM::Tree::Cache.new
     end
     
-    def current
+    def all
       @cache.all
     end
     
